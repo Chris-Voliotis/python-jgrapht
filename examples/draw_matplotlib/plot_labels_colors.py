@@ -21,17 +21,8 @@ g = jgrapht.create_graph(directed=False, weighted=True)
 
 # %%
 # Add some vertices
-
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
-g.add_vertex()
+for i in range(0,10):
+    g.add_vertex()
 
 
 # %%
