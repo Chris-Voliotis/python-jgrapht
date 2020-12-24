@@ -50,7 +50,6 @@ drawing.draw_jgrapht(
     node_label=True,
     node_color=range(len(g.vertices)),
     node_cmap=plt.cm.Blues,
-    edge_linewidth=4,
     arrow=True,
     arrow_color="orange",
     arrow_line="dotted",
