@@ -7,7 +7,7 @@ from ..algorithms.drawing import (
 )
 
 
-def draw(g, position=None, ax=None, **kwds):
+def draw(g, position=None, ax=None, node_label=False, **kwargs):
     """Draw a graph using Matplotlib.
 
     Draws the graph as a simple representation with no node labels or edge labels
@@ -16,12 +16,15 @@ def draw(g, position=None, ax=None, **kwds):
 
     :param g: graph
     :param position: vertices positions
+    :param node_label: whether to draw node labels
     :param kwargs: See draw_jgrapht_vertices,
      draw_jgrapht_edges,draw_jgrapht_labels,draw_jgrapht_edge_labels
     :param ax: Draw the graph in the specified Matplotlib axes
+    :type g: :py:class:`.Graph`
     :type position: dictionary, optional
+    :type node_label: bool, optional (default=False)
     :type ax: Matplotlib Axes object, optional
-    :type kwargs: optional keywords
+    :type kwargs: dict
 
     Examples
     --------
@@ -64,7 +67,7 @@ def draw(g, position=None, ax=None, **kwds):
     if position is None:
         position = layout(g)
 
-    draw_jgrapht(g, position=position, ax=ax, **kwds)
+    draw_jgrapht(g, position=position, ax=ax,node_label=node_label, **kwargs)
     ax.set_axis_off()
     plt.draw_if_interactive()
 
@@ -91,12 +94,13 @@ def draw_jgrapht(
     :param arrow: whether to draw arrowheads
     :param kwargs: See draw_jgrapht_vertices,
      draw_jgrapht_edges,draw_jgrapht_labels,draw_jgrapht_edge_labels
+    :type g: :py:class:`.Graph`
     :type position: dictionary, optional
-    :type arrow: bool, optional (default=True)
+    :type arrow: bool, optional (default=False)
     :type axis: bool, optional (default=True)
-    :type node_label: bool, optional (default=False)
-    :type edge_label: bool, optional (default=False)
-    :type kwargs: optional keywords
+    :type node_label: bool, optional (default=True)
+    :type edge_label: bool, optional (default=True)
+    :type kwargs: dict
 
     Examples
     --------
@@ -195,6 +199,7 @@ def draw_jgrapht_vertices(
     :param alpha: The node transparency
     :param ax: Draw the graph in the specified Matplotlib axes
     :param kwargs: See draw_jgrapht
+    :type g: :py:class:`.Graph`
     :type position: dictionary, optional
     :type axis: bool, optional (default=False)
     :type node_linewidths: float,(default:1.0)
@@ -210,7 +215,7 @@ def draw_jgrapht_vertices(
     :type alpha: float, optional (default=1.0)
     :type node_label: bool, optional (default=False)
     :type ax: Matplotlib Axes object, optional
-    :type kwargs: optional keywords
+    :type kwargs: dict
 
     Examples
     --------
@@ -349,6 +354,8 @@ def draw_jgrapht_edges(
     :param bbox: Matplotlib bbox,specify text box shape and colors.
     :param ax: Draw the graph in the specified Matplotlib axes
     :param kwargs: See draw_jgrapht
+    :type bbox: Matplotlib bbox
+    :type g: :py:class:`.Graph`
     :type position: dictionary, optional
     :type edge_color: color or array of colors (default='black')
     :type edge_cmap: list, optional (default:edge_cmap=None | examle: edge_cmap =plt.cm.Greens(np.linspace(edge_vmin,edge_vmax,len(g.edges))))
@@ -367,8 +374,7 @@ def draw_jgrapht_edges(
     :type edge_label: bool, optional (default=False)
     :type connection_style: str, optional (default=None | example: connection_style="arc3,rad=-0.3")
     :type ax: Matplotlib Axes object, optional
-    :type kwargs: optional keywords
-
+    :type kwargs: dict
     Examples
     --------
     >>> import matplotlib.pyplot as plt
@@ -389,7 +395,7 @@ def draw_jgrapht_edges(
     draw_jgrapht_labels()
     draw_jgrapht_edge_labels()
     -----
-    """
+   """
 
     try:
         import matplotlib.pyplot as plt
@@ -418,7 +424,7 @@ def draw_jgrapht_edges(
     show = kwargs.get("show")  # check if the user called only the function of edges
 
     if edge_cmap is not None:  # if the user wants color map for the edges
-        plt.close()
+        plt.clf()
         plt.rcParams["axes.prop_cycle"] = plt.cycler("color", edge_cmap)
         ax = plt.gca()
         if show is None:  # if  the user called only this function
@@ -473,20 +479,19 @@ def draw_jgrapht_edges(
         return
 
     # draw edges
+    directed = g.type.directed
     for e in g.edges:
         v1 = g.edge_source(e)
         v2 = g.edge_target(e)
         x1, y1 = position[v1]
         x2, y2 = position[v2]
-
         if edge_list is None:
             edge_list = []
             for e in g.edges:
                 edge_list.append(e)
-
         for l, edge in enumerate(edge_list):
             if edge_list[l] == e:
-                if arrow is True:  # Draw  arrows
+                if directed and arrow is True:  # Draw  arrows
                     a = FancyArrowPatch(
                         (x1, y1),
                         (x2, y2),
@@ -571,8 +576,9 @@ def draw_jgrapht_labels(
     :param axis: Draw the axes
     :param ax: Draw the graph in the specified Matplotlib axes
     :param bbox: Matplotlib bbox,specify text box shape and colors.
-    :param node_names: node names for edges
+    :param node_names: Names for nodes
     :param kwargs: See draw_jgrapht
+    :type g: :py:class:`.Graph`
     :type position: dictionary, optional
     :type node_fontsize: int, optional (default=12)
     :type node_font_color: string, optional (default='black')
@@ -584,7 +590,8 @@ def draw_jgrapht_labels(
     :type alpha: float, optional (default=1.0)
     :type axis: bool, optional (default=False)
     :type ax: Matplotlib Axes object, optional
-    :type kwargs: optional keywords
+    :type bbox: Matplotlib bbox
+    :type kwargs: dict
 
     Examples
     --------
@@ -684,6 +691,7 @@ def draw_jgrapht_edge_labels(
     :param edge_names: label names for edges
     :param draw_edge_weights: weights of edges
     :param kwargs: See draw_jgrapht
+    :type g: :py:class:`.Graph`
     :type position: dictionary, optional
     :type edge_fontsize: int, optional (default=12)
     :type edge_font_color: string, optional (default='black')
@@ -696,7 +704,8 @@ def draw_jgrapht_edge_labels(
     :type horizontalalignment: {'center', 'right', 'left'}
     :type draw_edge_weights: bool, optional (default=False)
     :type edge_names: list, optional
-    :type kwargs: optional keywords
+    :type bbox: Matplotlib bbox
+    :type kwargs: dict
 
     Examples
     --------
@@ -755,7 +764,6 @@ def draw_jgrapht_edge_labels(
         x2, y2 = position[v2]
 
         # Draw the labels
-        x, y = position[e]
         ax.text(
             (x1 + x2) / 2,
             (y1 + y2) / 2,
@@ -802,8 +810,16 @@ def layout(
     :param theta: parameter for approximation using the Barnes-Hut technique
     :param tolerance: tolerance used when comparing floating point values
     :param kwargs: See draw_jgrapht
+    :type g: :py:class:`.Graph`
+    :type seed: integer
+    :type theta: double
+    :type normalization_factor: double
+    :type radius: double
+    :type iterations: int
+    :type area: tuple
     :type pos_layout:  dictionary, optional
-    :type kwargs: optional keywords
+    :type vertex_comparator_cb: function
+    :type kwargs: dict
 
     Examples
     --------
@@ -874,8 +890,12 @@ def draw_circular(
            v1, v2 and return -1, 0, 1 depending of whether v1 < v2, v1 == v2, or v1 > v2 in the ordering
     :param kwargs: See draw_jgrapht,draw_jgrapht_vertices,
      draw_jgrapht_edges,draw_jgrapht_labels,draw_jgrapht_edge_labels
+    :type g: :py:class:`.Graph`
+    :type area: tuple
+    :type radius: double
+    :type vertex_comparator_cb: function
     :type axis: bool, optional (default=True)
-    :type kwargs: optional keywords
+    :type kwargs: dict
 
     Examples
     --------
@@ -912,6 +932,8 @@ def draw_random(g, area=(0, 0, 10, 10), seed=None, axis=True, **kwargs):
     :param axis: Draw the axes
     :param kwargs: See draw_jgrapht,draw_jgrapht_vertices,
      draw_jgrapht_edges,draw_jgrapht_labels,draw_jgrapht_edge_labels
+    :type g: :py:class:`.Graph`
+    :type area: tuple
     :type axis: bool, optional (default=True)
     :type kwargs: optional keywords
 
@@ -960,9 +982,15 @@ def draw_fruchterman_reingold(
     :param tolerance: tolerance used when comparing floating point values
     :param kwargs: See draw_jgrapht,draw_jgrapht_vertices,
      draw_jgrapht_edges,draw_jgrapht_labels,draw_jgrapht_edge_labels
+    :type g: :py:class:`.Graph`
+    :type area: tuple
+    :type iterations: int
+    :type normalization_factor: double
+    :type seed: integer
+    :type theta: double
     :type indexed: bool, optional (default=False)
     :type axis: bool, optional (default=True)
-    :type kwargs: optional keywords
+    :type kwargs: dict
 
     Examples
     --------
