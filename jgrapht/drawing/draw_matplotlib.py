@@ -399,9 +399,12 @@ def draw_jgrapht_edges(
         return
 
     if ax is None:
-        if edge_cmap is not None:  # if the user wants color map for the edges
-            plt.rcParams["axes.prop_cycle"] = plt.cycler("color", edge_cmap)
-            edge_color=""
+        ax = plt.gca()
+
+    if edge_cmap is not None:  # if the user wants color map for the edges
+        plt.clf()
+        plt.rcParams["axes.prop_cycle"] = plt.cycler("color", edge_cmap)
+        edge_color = ""
         ax = plt.gca()
 
     # Hide axis values
@@ -728,7 +731,8 @@ def layout(
     """positioning algorithms for graph drawing.
 
     :param g: the graph to draw
-    :param pos_layout: circular_layout|random_layout|fruchterman_reingold_layout|fruchterman_reingold_indexed_layout
+    :param pos_layout: circular_layout|random_layout|
+        fruchterman_reingold_layout|fruchterman_reingold_indexed_layout
     :param area: the two dimensional area as a tuple (minx, miny, width, height)
     :param seed: seed for the random number generator. If None the system time is used
     :param radius: radius of the circle
