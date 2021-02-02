@@ -1,4 +1,3 @@
-
 from ..algorithms.drawing import (
     circular_layout_2d,
     random_layout_2d,
@@ -130,14 +129,9 @@ def draw_jgrapht(
     except RuntimeError:
         print("Matplotlib unable to open display")
         raise
-    show = 0
 
     if position is None:
         position = layout(g)
-
-    draw_jgrapht_vertices(
-        g, position, node_label=node_label, axis=axis, show=show, **kwargs
-    )
 
     draw_jgrapht_edges(
         g,
@@ -146,15 +140,12 @@ def draw_jgrapht(
         edge_label=edge_label,
         node_label=node_label,
         axis=axis,
-        show=show,
-        **kwargs,
+        **kwargs
     )
 
-    if node_label is True:
-        draw_jgrapht_labels(g, position=position, axis=axis, **kwargs)
-
-    if edge_label is True:
-        draw_jgrapht_edge_labels(g, position=position, axis=axis, **kwargs)
+    draw_jgrapht_vertices(
+        g, position, node_label=node_label, axis=axis, **kwargs
+    )
 
     plt.draw_if_interactive()
 
@@ -277,7 +268,7 @@ def draw_jgrapht_vertices(
         marker=node_shape,
         edgecolors=node_edge_color,
         zorder=2.5,
-        label=node_title,
+        label=node_title
     )
 
     if node_title is not None:
@@ -298,11 +289,10 @@ def draw_jgrapht_vertices(
             markerscale=0.5,
             markerfirst=True,
             ncol=3,
-            bbox_to_anchor=(0.5, 1.15),
+            bbox_to_anchor=(0.5, 1.15)
         )
 
-    show = kwargs.get("show")  # check if the user called only the function of nodes
-    if show is None and node_label is True:
+    if node_label is True:
         draw_jgrapht_labels(g, position, axis=axis, **kwargs)
 
 
@@ -325,7 +315,6 @@ def draw_jgrapht_edges(
     edge_title=None,
     edge_label=False,
     connection_style=None,
-    bbox=dict(boxstyle="round,pad=0.03", ec="white", fc="white"),
     ax=None,
     **kwargs
 ):
@@ -351,14 +340,12 @@ def draw_jgrapht_edges(
     :param edge_title: Label for graph legend
     :param edge_label: draw labels on the edges.
     :param connection_style: Pass the connection_style parameter to create curved arc of rounding radius rad
-    :param bbox: Matplotlib bbox,specify text box shape and colors.
     :param ax: Draw the graph in the specified Matplotlib axes
     :param kwargs: See draw_jgrapht
-    :type bbox: Matplotlib bbox
     :type g: :py:class:`.Graph`
     :type position: dictionary, optional
     :type edge_color: color or array of colors (default='black')
-    :type edge_cmap: list, optional (default:edge_cmap=None | examle: edge_cmap =plt.cm.Greens(np.linspace(edge_vmin,edge_vmax,len(g.edges))))
+    :type edge_cmap: list, optional (default:edge_cmap=None | example: edge_cmap =plt.cm.Greens(np.linspace(edge_vmin,edge_vmax,len(g.edges))))
     :type axis: bool, optional (default=False)
     :type edge_linewidth: float, optional (default=1.3)
     :type line_style: string, optional (default='solid')
@@ -412,6 +399,9 @@ def draw_jgrapht_edges(
         return
 
     if ax is None:
+        if edge_cmap is not None:  # if the user wants color map for the edges
+            plt.rcParams["axes.prop_cycle"] = plt.cycler("color", edge_cmap)
+            edge_color=""
         ax = plt.gca()
 
     # Hide axis values
@@ -420,63 +410,6 @@ def draw_jgrapht_edges(
 
     if axis is False:
         ax.set_axis_off()
-
-    show = kwargs.get("show")  # check if the user called only the function of edges
-
-    if edge_cmap is not None:  # if the user wants color map for the edges
-        plt.clf()
-        plt.rcParams["axes.prop_cycle"] = plt.cycler("color", edge_cmap)
-        ax = plt.gca()
-        if show is None:  # if  the user called only this function
-            draw_jgrapht_edges(
-                g,
-                position=position,
-                edge_label=edge_label,
-                edge_cmap=None,
-                edge_color="",
-                edge_linewidth=edge_linewidth,
-                line_style=line_style,
-                arrow=arrow,
-                arrow_size=arrow_size,
-                arrows_tyle=arrow_style,
-                arrow_color=arrow_color,
-                edge_list=edge_list,
-                alpha=alpha,
-                axis=axis,
-                edge_title=edge_title,
-                connection_style=connection_style,
-                bbox=bbox,
-                ax=ax,
-                arrow_head=arrow_head,
-                arrow_line=arrow_line,
-                **kwargs,
-            )
-        else:
-            kwargs.pop("show")  # delete from kwargs the parameter show
-            draw_jgrapht(
-                g,
-                position=position,
-                edge_cmap=None,
-                edge_color="",
-                edge_linewidth=edge_linewidth,
-                edge_list=edge_list,
-                line_style=line_style,
-                arrow=arrow,
-                arrow_size=arrow_size,
-                arrow_style=arrow_style,
-                arrow_color=arrow_color,
-                alpha=alpha,
-                axis=axis,
-                ax=ax,
-                edge_title=edge_title,
-                connection_style=connection_style,
-                edge_label=edge_label,
-                bbox=bbox,
-                arrow_head=arrow_head,
-                arrow_line=arrow_line,
-                **kwargs,
-            )
-        return
 
     # draw edges
     directed = g.type.directed
@@ -504,7 +437,7 @@ def draw_jgrapht_edges(
                         lw=arrow_size,
                         connectionstyle=connection_style,
                         color=arrow_color,
-                        label=edge_title,
+                        label=edge_title
                     )
                     ax.add_patch(a)
                     ax.autoscale_view()
@@ -517,7 +450,7 @@ def draw_jgrapht_edges(
                         alpha=alpha,
                         linewidth=edge_linewidth,
                         linestyle=line_style,
-                        label=edge_title,
+                        label=edge_title
                     )
 
                 if edge_title is not None:  # legend title for the specific edges
@@ -537,10 +470,10 @@ def draw_jgrapht_edges(
                         markerscale=0.5,
                         markerfirst=True,
                         ncol=3,
-                        bbox_to_anchor=(0.5, 1.15),
+                        bbox_to_anchor=(0.5, 1.15)
                     )
 
-    if show is None and edge_label is True:
+    if edge_label is True:
         draw_jgrapht_edge_labels(g, position, axis=axis, **kwargs)
 
 
@@ -555,7 +488,6 @@ def draw_jgrapht_labels(
     verticalalignment="center",
     alpha=1,
     axis=False,
-    bbox=dict(boxstyle="round,pad=0.03", ec="white", fc="white"),
     ax=None,
     node_names=None,
     **kwargs
@@ -575,7 +507,6 @@ def draw_jgrapht_labels(
     :param alpha: label transparency
     :param axis: Draw the axes
     :param ax: Draw the graph in the specified Matplotlib axes
-    :param bbox: Matplotlib bbox,specify text box shape and colors.
     :param node_names: Names for nodes
     :param kwargs: See draw_jgrapht
     :type g: :py:class:`.Graph`
@@ -590,7 +521,6 @@ def draw_jgrapht_labels(
     :type alpha: float, optional (default=1.0)
     :type axis: bool, optional (default=False)
     :type ax: Matplotlib Axes object, optional
-    :type bbox: Matplotlib bbox
     :type kwargs: dict
 
     Examples
@@ -650,7 +580,7 @@ def draw_jgrapht_labels(
             color=node_font_color,
             weight=node_font_weight,
             family=node_font_family,
-            transform=ax.transData,
+            transform=ax.transData
         )
         ax.plot(x, y)
 
@@ -777,7 +707,7 @@ def draw_jgrapht_edge_labels(
             family=edge_font_family,
             transform=ax.transData,
             bbox=bbox,
-            zorder=2,
+            zorder=2
         )
         ax.plot((x1 + x2) / 2, (y1 + y2) / 2)
 
@@ -916,10 +846,10 @@ def draw_circular(
             area=area,
             pos_layout="circular_layout",
             radius=radius,
-            vertex_comparator_cb=vertex_comparator_cb,
+            vertex_comparator_cb=vertex_comparator_cb
         ),
         axis=axis,
-        **kwargs,
+        **kwargs
     )
 
 
@@ -1015,7 +945,7 @@ def draw_fruchterman_reingold(
                 normalization_factor=normalization_factor,
                 seed=seed,
                 theta=theta,
-                tolerance=tolerance,
+                tolerance=tolerance
             ),
             axis=axis,
             **kwargs,
@@ -1029,8 +959,8 @@ def draw_fruchterman_reingold(
                 pos_layout="fruchterman_reingold_layout",
                 iterations=iterations,
                 normalization_factor=normalization_factor,
-                seed=seed,
+                seed=seed
             ),
             axis=axis,
-            **kwargs,
+            **kwargs
         )
