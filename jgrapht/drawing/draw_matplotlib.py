@@ -16,9 +16,9 @@ def draw(g, position=None, ax=None, node_label=False, **kwargs):
     :param g: graph
     :param position: vertices positions
     :param node_label: whether to draw node labels
+    :param ax: Draw the graph in the specified Matplotlib axes
     :param kwargs: See draw_jgrapht_vertices,
      draw_jgrapht_edges,draw_jgrapht_labels,draw_jgrapht_edge_labels
-    :param ax: Draw the graph in the specified Matplotlib axes
     :type g: :py:class:`.Graph`
     :type position: dictionary, optional
     :type node_label: bool, optional (default=False)
@@ -300,7 +300,7 @@ def draw_jgrapht_vertices(
             bbox_to_anchor=(0.5, 1.15)
         )
 
-    if node_label is True:
+    if node_label is True: #if the user wants labels for nodes
         draw_jgrapht_labels(g, position, axis=axis, **kwargs)
 
 
@@ -484,7 +484,7 @@ def draw_jgrapht_edges(
                         bbox_to_anchor=(0.5, 1.15)
                     )
 
-    if edge_label is True:
+    if edge_label is True: #if the user wants labels for edges
         draw_jgrapht_edge_labels(g, position, axis=axis, **kwargs)
 
 
