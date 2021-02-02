@@ -66,7 +66,15 @@ def draw(g, position=None, ax=None, node_label=False, **kwargs):
     if position is None:
         position = layout(g)
 
-    draw_jgrapht(g, position=position, ax=ax,node_label=node_label, **kwargs)
+    draw_jgrapht_edges(
+        g,
+        position,
+        **kwargs
+    )
+
+    draw_jgrapht_vertices(
+        g, position, node_label=node_label, **kwargs
+    )
     ax.set_axis_off()
     plt.draw_if_interactive()
 
